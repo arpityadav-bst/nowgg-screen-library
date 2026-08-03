@@ -7,6 +7,9 @@ import { Icon } from '@/components/ui/Icon'
 import { ChevronRight, CloseGlyph, DiscordGlyph, YouTubeGlyph } from '@/components/ui/icons'
 import { GAMES } from '@/lib/mock-data'
 import { cn } from '@/lib/cn'
+import { useNowPrime } from '@/components/providers/NowPrimeProvider'
+import { NowPrimePopup } from '@/components/play/NowPrimePopup'
+import { ManageSubscriptionModal } from './ManageSubscriptionModal'
 
 // Profile sidebar — right-side drawer opened from the TopBar avatar (Figma "Gamification
 // Sidebar" / User-Profile 26500:133019). FROSTED GLASS panel (white-20 + backdrop-blur)
@@ -54,6 +57,10 @@ export function ProfileSidebar({ open, onClose }: { open: boolean; onClose: () =
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
+  const { isPrime, plan } = useNowPrime()
+  const [manageOpen, setManageOpen] = useState(false)
+  const [primeOpen, setPrimeOpen] = useState(false)
+
   useEffect(() => {
     const h = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', h)
@@ -63,6 +70,7 @@ export function ProfileSidebar({ open, onClose }: { open: boolean; onClose: () =
   if (!mounted) return null
 
   return createPortal(
+    <>
     <div
       className={cn('fixed inset-0 z-50', open ? 'pointer-events-auto' : 'pointer-events-none')}
       role="dialog"
@@ -151,8 +159,26 @@ export function ProfileSidebar({ open, onClose }: { open: boolean; onClose: () =
               title="Subscriptions"
             />
             <div className="rounded-card border border-line bg-black-20 p-4">
-              <p className="text-sm text-text-secondary">Manage your subscriptions from here</p>
-              <Button variant="ghost" size="sm" className="mt-3">Manage Subscription</Button>
+              {isPrime && plan ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/icons/now-gg/now-prime-logo.webp" alt="" aria-hidden className="size-5" />
+                      <p className="text-sm font-semibold text-text-primary">nowPrime · {plan.name}</p>
+                    </div>
+                    <span className="rounded-pill bg-status-success/20 px-2 py-0.5 text-3xs font-bold uppercase tracking-wide text-status-success">
+                      Active
+                    </span>
+                  </div>
+                  <Button variant="ghost" size="sm" className="mt-3" onClick={() => setManageOpen(true)}>Manage Subscription</Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-text-secondary">Go ad-free with nowPrime — play on any device, no interruptions.</p>
+                  <Button variant="ghost" size="sm" className="mt-3" onClick={() => setPrimeOpen(true)}>Get nowPrime</Button>
+                </>
+              )}
             </div>
           </section>
 
@@ -198,7 +224,10 @@ export function ProfileSidebar({ open, onClose }: { open: boolean; onClose: () =
           </div>
         </div>
       </aside>
-    </div>,
+    </div>
+    <ManageSubscriptionModal open={manageOpen} onClose={() => setManageOpen(false)} />
+    {primeOpen && <NowPrimePopup onClose={() => setPrimeOpen(false)} />}
+    </>,
     document.body,
   )
 }

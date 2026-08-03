@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { NowPrimeProvider } from '@/components/providers/NowPrimeProvider'
+import { DevicePreview } from '@/components/demo/DevicePreview'
 
 export const metadata: Metadata = {
   title: 'now.gg — design handoff',
@@ -10,19 +11,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        {/* Bricolage Grotesque — now.gg's typeface. Loaded via <link> (not next/font)
-            so the build never depends on network access at build time. The Tailwind
-            `sans` stack falls back to the literal family name when the var is unset. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+      {/* Bricolage Grotesque — now.gg's typeface — is self-hosted via @font-face in
+          globals.css (files in /public/fonts). No runtime Google Fonts dependency, so it
+          renders reliably for dev handoff (offline / firewalled / Google-Fonts-blocked). */}
       <body className="min-h-screen bg-page-bg text-text-primary antialiased">
         <NowPrimeProvider>{children}</NowPrimeProvider>
+        <DevicePreview />
       </body>
     </html>
   )

@@ -23,9 +23,17 @@ export function NowPrimeCta({ className }: { className?: string }) {
           className,
         )}
       >
-        {/* nowPrime logo art + wordmark — real now.gg assets */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/icons/now-gg/now-prime-logo.webp" alt="" aria-hidden className="size-6 shrink-0" />
+        {/* nowPrime logo art (with a mobile glint) + wordmark — real now.gg assets */}
+        <span className="relative inline-flex size-6 shrink-0 overflow-hidden rounded-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icons/now-gg/now-prime-logo.webp" alt="" aria-hidden className="size-6" />
+          {/* shine sweep — mobile only (below lg), where the CTA is icon-only */}
+          <span
+            className="np-coin-glint pointer-events-none absolute -inset-y-1 left-0 w-[42%] lg:hidden"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent)' }}
+            aria-hidden
+          />
+        </span>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icons/now-gg/now-prime-text.webp" alt="nowPrime" className="-mt-0.5 hidden h-4 w-auto lg:block" />
       </button>
